@@ -12,6 +12,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.clipshare.task_management.model.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +52,7 @@ public class ProjectController {
     public String getTaskById(@PathVariable Integer id, Model model) {
         Project project = projectService.getProjectById(id);
         if(project == null) {
+            throw new NullPointerException("project is null");
             // throw new ResourceNotFoundException("Project non trouvé");
         }
         model.addAttribute("project", project); // Changement de "details" à "project"
@@ -92,6 +96,32 @@ public class ProjectController {
     public ResponseEntity<String> deleteTask(@PathVariable Integer id) throws Exception {
         taskService.deleteTask(id);
         return ResponseEntity.ok("Task deleted successfully");
+    }
+
+    @PostMapping("/projects/{projectId}/update-deadline")
+    public String updateProjectDeadline(@PathVariable Integer projectId,
+                                        @RequestParam("newDeadline") String newDeadlin,
+                                        Model model) { // Use @RequestParam instead of @PathVariable to receive the date as a form parameter.
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        try {
+            LocalDate newDeadline = LocalDate.parse(newDeadlin, dateFormatter);
+            if(newDeadline.isBefore(LocalDate.now())) {
+                throw new IllegalArgumentException("La date ne peut pas être dans le passé");
+            }
+            // Project updatedProject = projectService.updateDeadline(projectId, newDeadline.toString());
+            projectService.updateDeadline(projectId, newDeadline.toString());
+            return "redirect:/projects"; // Redirect on success
+
+        } catch (DateTimeParseException e) {
+            model.addAttribute("errorMessage", "Invalid date format. Please use yyyy-MM-dd.");
+            return "error";  // Return the view where the error message can be displayed.
+        }
+        catch(Exception e){
+            model.addAttribute("errorMessage", "An error occurred while updating deadline.");
+            return "error";
+        }
+
     }
 
     @PutMapping("/tasks/{taskId}/complete")

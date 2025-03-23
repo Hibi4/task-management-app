@@ -30,6 +30,13 @@ public class ProjectService {
     public Project getProjectById(Integer id) {
         return projectRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + id));
     }
+    public Project updateDeadline(Integer id, String newDeadLine) {
+        Project project = projectRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + id));
+
+        project.setDeadline(newDeadLine);
+        return projectRepository.save(project);
+    }
+
 
     /* public void addTaskToProject(Integer projectId, Task task) {
         Project project = projectRepository.findById(projectId).get();
@@ -54,10 +61,5 @@ public class ProjectService {
             throw new IllegalArgumentException("Project with id " + id + " does not exist");
         }
     }
-
-
-
-    
-
 
 }

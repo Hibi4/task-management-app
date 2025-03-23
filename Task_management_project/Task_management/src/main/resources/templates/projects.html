@@ -104,11 +104,23 @@
                         </div>
                         <div>
                             <!-- <p>Modifier Deadline: <label> -->
+                            <!--
+                            <form th:action="@{/projects/{projectId}/update-deadline(projectId=${project.project_id})}" method="post">
+    <input type="date" name="newDeadline" required
+           th:value="${project.deadline}">
+    <button type="submit" class="btn btn-primary">Mettre à jour la date</button>
+</form> -->
                             <label>
-                                <input type="date" required name="deadline"
+                                <!-- <input type="date" required name="deadline"
                                                              class="form-control task-input">
-                                <button class="btn btn-primary update-deadline" 
-                                th:data-project-id="${project.project_id}">Mettre à jour la date</button>
+                                <button class="btn btn-primary update-deadline" /projects/updateDate/{projectId}
+                                th:data-project-id="${project.project_id}">Mettre à jour la date</button> -->
+                                <form th:action="@{/projects/{projectId}/update-deadline(projectId=${project.project_id})}" method="post">
+                                <!-- <form th:action="@{/projects/updateDate/{projectId}/ update-deadline(projectId=${project.project_id})}" method="post"> -->
+                                    <input type="date" name="newDeadline" required class="form-control task-input"
+                                           th:data-project-id="${project.project_id}" th:value="${project.deadline}">
+                                    <button type="submit" class="btn btn-primary">Mettre à jour la date</button>
+                                </form>
                             </label>
                         </div>
                     </div>
